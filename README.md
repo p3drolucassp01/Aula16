@@ -144,3 +144,4 @@ Para rodar o projeto, basta executar o comando:
 ```bash
 npm start
 ```
+![alt text](image.png)
