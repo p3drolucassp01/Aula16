@@ -3,145 +3,90 @@
 
 ## Descrição
 
-Este exercício consiste em criar um gerenciador de tarefas simples utilizando React. Durante o desenvolvimento, foram aplicados conceitos como criação de componentes, uso de JSX, React Fragments e validação de props com `PropTypes`.
+Adicionando botão funcional
 
 ## O que foi feito
 
-### 1. Configuração do Projeto
-- Criado o ambiente React utilizando o `create-react-app`:
-  ```bash
-  npx create-react-app task-manager
-  cd task-manager
-  ```
-- Instalado o pacote `prop-types` para validação de propriedades:
-  ```bash
-  npm install prop-types
-  ```
-- Inicializado o projeto com:
-  ```bash
-  npm start
-  ```
+### 1. Botão de Oculta e exibir
 
-### 2. Estruturação do Projeto
-- No arquivo `src/App.js`, removi o conteúdo padrão e criei dois containers principais:
-  - **Cabeçalho:** Exibe o título do projeto, utilizando o componente `Header`.
-  - **Seção de Tarefas:** Mostra a lista de tarefas, gerenciada pelo componente `TaskContainer`.
 
-#### Código Final do `App.js`:
+# Explicação
+
+## 1. Gestão de Estado
+No arquivo `App.js`, é utilizado o `useState` para criar uma variável de estado chamada `showTasks`, que inicialmente é `true`:
+
 ```jsx
-import React from 'react';
-import Header from './components/Header';
-import TaskContainer from './components/TaskContainer';
-
-function App() {
-  return (
-    <div className="App">
-      <Header />
-      <TaskContainer />
-    </div>
-  );
-}
-
-export default App;
+const [showTasks, setShowTasks] = useState(true);
 ```
 
-### 3. Componente Header
-- Criado em `src/components/Header.js`, responsável por exibir o título do projeto.
+Essa variável define se o componente `TaskContainer` deve ser exibido ou não.
+
+## 2. Alternância de Visibilidade
+A função `toggleTasks` altera o estado de `showTasks`, invertendo o valor atual:
 
 ```jsx
-import React from 'react';
-
-function Header() {
-  return (
-    <header>
-      <h1>Task Manager</h1>
-    </header>
-  );
-}
-
-export default Header;
-```
-
-### 4. Componente TaskContainer
-- Criado em `src/components/TaskContainer.jsx` para gerenciar a lista de tarefas.
-- Utilizei `React.Fragment` para envolver elementos sem adicionar um nó extra no DOM.
-- Inicialmente, a lista de tarefas foi representada como elementos JSX diretamente no componente.
-
-```jsx
-import React from 'react';
-
-function TaskContainer() {
-  return (
-    <React.Fragment>
-      <div className="task">
-        <h3>Tarefa 1</h3>
-        <p>Descrição da Tarefa 1</p>
-      </div>
-      <div className="task">
-        <h3>Tarefa 2</h3>
-        <p>Descrição da Tarefa 2</p>
-      </div>
-    </React.Fragment>
-  );
-}
-
-export default TaskContainer;
-```
-
-### 5. Componente Task
-- Criado em `src/components/Task.js` para renderizar dinamicamente o título e a descrição de cada tarefa.
-- Utilizei `PropTypes` para validar os dados passados como propriedades.
-
-```jsx
-import React from 'react';
-import PropTypes from 'prop-types';
-
-function Task({ title, description }) {
-  return (
-    <div className="task">
-      <h3>{title}</h3>
-      <p>{description}</p>
-    </div>
-  );
-}
-
-Task.propTypes = {
-  title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+const toggleTasks = () => {
+  setShowTasks(!showTasks);
 };
-
-export default Task;
 ```
 
-### 6. Atualização do TaskContainer
-- Modifiquei o `TaskContainer` para usar o componente `Task`.
-- Adicionei uma lista de tarefas fictícias e utilizei o método `map` para renderizar cada tarefa.
+O botão para ocultar/exibir chama essa função ao ser clicado:
 
 ```jsx
-import React from 'react';
-import Task from './Task';
-
-function TaskContainer() {
-  const tasks = [
-    { id: 1, title: 'Tarefa 1', description: 'Descrição da Tarefa 1' },
-    { id: 2, title: 'Tarefa 2', description: 'Descrição da Tarefa 2' },
-  ];
-
-  return (
-    <div>
-      {tasks.map((task) => (
-        <Task key={task.id} title={task.title} description={task.description} />
-      ))}
-    </div>
-  );
-}
-
-export default TaskContainer;
+<button onClick={toggleTasks} className="toggle-tasks-button">
+  {showTasks ? 'Ocultar Tarefas' : 'Exibir Tarefas'}
+</button>
 ```
 
-## Execução do Projeto
-Para rodar o projeto, basta executar o comando:
-```bash
-npm start
+O texto do botão muda dinamicamente dependendo do valor de `showTasks`.
+
+## 3. Renderização Condicional
+A renderização do componente `TaskContainer` só ocorre quando `showTasks` é `true`:
+
+```jsx
+{showTasks && <TaskContainer />}
 ```
-![alt text](image.png)
+
+## 4. Controle Interno no `TaskContainer`
+Dentro de `TaskContainer`, um segundo nível de controle é implementado com o estado `isVisible`:
+
+```jsx
+const [isVisible, setIsVisible] = useState(true);
+```
+
+A função `toggleVisibility` funciona da mesma forma que `toggleTasks`, mas controla a visibilidade de uma lista específica de tarefas:
+
+```jsx
+const toggleVisibility = () => {
+  setIsVisible(!isVisible);
+};
+```
+
+## 5. Interação entre os Botões
+No `TaskContainer`, o botão de ocultar/exibir tarefas é configurado com a mesma lógica de alternância:
+
+```jsx
+<button onClick={toggleVisibility} className="toggle-button">
+  {isVisible ? 'Ocultar Atividades' : 'Exibir Atividades'}
+</button>
+```
+
+A lista de tarefas (`tasks`) é renderizada apenas quando `isVisible` é `true`:
+
+```jsx
+{isVisible && (
+  <div className="task-list">
+    {tasks.map((task) => (
+      <Task key={task.id} title={task.title} description={task.description} />
+    ))}
+  </div>
+)}
+```
+
+# Antes
+
+![alt text](<Captura de tela 2024-12-04 224251.png>)
+
+# Depois
+
+![alt text](<Captura de tela 2024-12-08 210723.png>)
